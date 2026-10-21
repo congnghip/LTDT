@@ -1,0 +1,95 @@
+# .NET / Visual Studio
+bin/
+obj/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]uild/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+**/build/
+**/.dart_tool/
+
+# Android build
+android/.gradle
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+**/GeneratedPluginRegistrant.java
+
+# iOS / macOS build
+ios/.generated/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+*.swp
+*~
+.DS_Store
+
+# Temporary & database files
+*.log
+
+# Environment & Secret files
+.env
+.env.*
+*.env
+!.env.example
+
+# Temporary test scripts & artifacts
+/scratch/
+/check_db_faces.py
+/crop_samples.py
+/extract_samples.py
+/parse_dump.py
+/set_db_face.py
+/test_*.py
+/update_sample_face.py
+/*.jpg
+/btn_crop.png
+/left_*.png
+/right_*.png
+/screen_after_*.png
+/screen_curr*.png
+/screen_face_*.png
+/screen_fb*.png
+/screen_live_*.png
+/screen_loaded.png
+/screen_match_*.png
+/screen_now.png
+/screen_scrolled.png
+/screen_sheet*.png
+/screen_check*.png
+/screen_tab1*.png
+/screen_test_*.png
+/screen_verified_*.png
+/user_*.jpg
+
