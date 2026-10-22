@@ -315,6 +315,17 @@ docker-compose up -d --build
 
 ---
 
+### Cách 4: Triển khai trực tiếp lên Vercel (Container Runtime / Fluid Compute)
+Backend đã được tích hợp sẵn file `Dockerfile.vercel` và `vercel.json` tối ưu cho runtime container của Vercel:
+1. Đăng nhập vào [Vercel Dashboard](https://vercel.com) và bấm **Add New...** ➔ **Project** ➔ Chọn kho lưu trữ [congnghip/LTDT_BE](https://github.com/congnghip/LTDT_BE).
+2. Vercel tự động nhận diện `Dockerfile.vercel` và kích hoạt **Vercel Serverless Container**.
+3. Cấu hình biến môi trường kết nối Database trong mục **Environment Variables**:
+   - `ConnectionStrings__DefaultConnection`: Chuỗi kết nối PostgreSQL trên đám mây (Neon, Supabase, hoặc Railway PostgreSQL).
+   - `JWTKey__Secret`: Chuỗi khóa ký JWT Token.
+4. Bấm **Deploy**. Vercel sẽ tự động build container .NET 10 và cấp phát domain HTTPS toàn cầu.
+
+---
+
 ## 🌐 Triển khai Public HTTPS qua Cloudflare Tunnel
 
 Để điện thoại di động thật (chạy 4G/Wi-Fi bên ngoài) có thể gọi trực tiếp vào API localhost mà không cần mở cổng modem (Port Forwarding), dự án cung cấp script tạo **Cloudflare Tunnel HTTPS miễn phí**:

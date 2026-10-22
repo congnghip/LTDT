@@ -1,0 +1,22 @@
+# Stage 1: Build ASP.NET Core Web API
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+# Copy project file va restore dependencies
+COPY ["Sang6_WebAPI/Sang6_WebAPI.csproj", "Sang6_WebAPI/"]
+RUN dotnet restore "Sang6_WebAPI/Sang6_WebAPI.csproj"
+
+# Copy toan bo source code va publish ban Release
+COPY Sang6_WebAPI/ Sang6_WebAPI/
+WORKDIR /src/Sang6_WebAPI
+RUN dotnet publish "Sang6_WebAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# Stage 2: Runtime tren nen tang Vercel Fluid Compute Container
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+WORKDIR /app
+EXPOSE 8080
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV PORT=8080
+
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "Sang6_WebAPI.dll"]

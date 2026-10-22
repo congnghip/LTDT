@@ -13,6 +13,13 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Hỗ trợ cổng động khi deploy Cloud (Vercel, Render, Railway, Fly.io cung cấp biến PORT)
+var envPort = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(envPort))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{envPort}");
+}
+
 // 1. Cấu hình Database PostgreSQL (Tên database cá nhân: buinguyencongnghiep_chamcong)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
