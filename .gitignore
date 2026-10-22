@@ -91,5 +91,19 @@ ios/Runner/GeneratedPluginRegistrant.*
 /screen_tab1*.png
 /screen_test_*.png
 /screen_verified_*.png
+/live_*.png
+/current_live.png
+/screen_manager.png
 /user_*.jpg
+
+# Allowed showcase screenshots for README
+!screen_launch.png
+!screen_dashboard.png
+!screen_facemesh.png
+!screen_noise_tab.png
+!screen_admin_employees.png
+!screen_shifts.png
+!screen_history.png
+!screen_leaves.png
+
 

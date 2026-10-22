@@ -20,28 +20,36 @@
 <div align="center">
   <table>
     <tr>
-      <td align="center"><b>Màn hình Đăng nhập & Xác thực</b></td>
-      <td align="center"><b>Dashboard Nhân viên</b></td>
+      <td align="center"><b>🔐 Màn hình Đăng nhập & Phân quyền</b></td>
+      <td align="center"><b>💼 Dashboard Nhân viên & Bộ tính lương</b></td>
     </tr>
     <tr>
-      <td><img src="screen_launch.png" width="340" alt="Login & Launch Screen"/></td>
-      <td><img src="screen_dashboard.png" width="340" alt="Employee Dashboard"/></td>
+      <td><img src="screen_launch.png" width="340" alt="Màn hình Đăng nhập OTP & Face ID"/></td>
+      <td><img src="screen_dashboard.png" width="340" alt="Dashboard Nhân viên & Live Salary Tracker"/></td>
     </tr>
     <tr>
-      <td align="center"><b>Đo tiếng ồn môi trường làm việc (dB)</b></td>
-      <td align="center"><b>Chấm công khuôn mặt AI & Vị trí</b></td>
+      <td align="center"><b>👤 Xác thực Face Mesh 3D AI Biometric</b></td>
+      <td align="center"><b>🔊 Giám sát ô nhiễm tiếng ồn (78.7 dB)</b></td>
     </tr>
     <tr>
-      <td><img src="screen_noise_tab.png" width="340" alt="Noise Monitoring dB Tab"/></td>
-      <td><img src="screen_factory.png" width="340" alt="Face AI & GPS Check-in"/></td>
+      <td><img src="screen_facemesh.png" width="340" alt="Nhận diện khuôn mặt 3D Face Mesh Khớp 74.7%"/></td>
+      <td><img src="screen_noise_tab.png" width="340" alt="Đo độ ồn môi trường SPL và biểu đồ sóng âm 30 dải tần"/></td>
     </tr>
     <tr>
-      <td align="center"><b>Xác thực Face Mesh 3D</b></td>
-      <td align="center"><b>Lịch sử & Thống kê chấm công</b></td>
+      <td align="center"><b>👥 Quản trị Nhân sự Admin (CRUD)</b></td>
+      <td align="center"><b>⏰ Thiết lập Ca trực & Đơn giá (Manager)</b></td>
     </tr>
     <tr>
-      <td><img src="screen2.png" width="340" alt="Face Mesh Verification"/></td>
-      <td><img src="screen3.png" width="340" alt="Attendance History & Stats"/></td>
+      <td><img src="screen_admin_employees.png" width="340" alt="Quản lý nhân viên CRUD và cấu hình lương"/></td>
+      <td><img src="screen_shifts.png" width="340" alt="Quản lý ca làm việc và đơn giá theo giờ"/></td>
+    </tr>
+    <tr>
+      <td align="center"><b>📊 Lịch sử chấm công & Cảm biến</b></td>
+      <td align="center"><b>📝 Quản lý & Phê duyệt Đơn nghỉ phép</b></td>
+    </tr>
+    <tr>
+      <td><img src="screen_history.png" width="340" alt="Lịch sử chấm công, phương thức và mức ồn dB"/></td>
+      <td><img src="screen_leaves.png" width="340" alt="Quản lý và duyệt đơn xin nghỉ phép"/></td>
     </tr>
   </table>
 </div>
@@ -97,8 +105,8 @@ Hệ thống kết hợp giữa **Ứng dụng di động Flutter** đa nền t�
 
 ### 5. 👥 Phân quyền người dùng đa cấp (RBAC)
 - **Nhân viên (Employee):** Check-in, Check-out, xem bảng công theo tuần/tháng, gửi đơn xin nghỉ phép, giám sát mức ồn môi trường.
-- **Quản lý (Manager):** Giám sát nhân sự trong phòng ban, theo dõi tình trạng đi trễ/về sớm, duyệt đơn nghỉ phép.
-- **Quản trị viên (Admin):** Quản lý nhân viên, cấu hình thông tin công ty, ca làm việc (Shift), xuất dữ liệu thống kê tổng hợp.
+- **Quản lý (Manager):** Giám sát nhân sự trong phòng ban, theo dõi tình trạng đi trễ/về sớm, quản lý thiết lập ca làm việc (Shift CRUD: xem, thêm, sửa, xóa ca), duyệt đơn nghỉ phép.
+- **Quản trị viên (Admin):** Quản lý hồ sơ nhân viên (CRUD Employee), giám sát bảng chấm công toàn công ty, phê duyệt đơn nghỉ phép, cấu hình hệ thống.
 
 ### 6. 📧 Dịch vụ thông báo & Xác thực Email
 - Tích hợp gửi mã OTP xác nhận tài khoản qua Google SMTP Server.
@@ -164,10 +172,14 @@ bt/
 ├── Chay_May_Ao.bat                    # Script khởi chạy máy ảo Android & Flutter App
 ├── docker-compose.yml                 # Cấu hình cụm Docker (Database + Backend + Frontend)
 ├── reset_today.py                     # Script Python hỗ trợ reset dữ liệu chấm công test
-├── screen_launch.png                  # Ảnh chụp màn hình ứng dụng
-├── screen_dashboard.png
-├── screen_factory.png
-├── screen_noise_tab.png
+├── screen_launch.png                  # Ảnh chụp màn hình ứng dụng (Đăng nhập)
+├── screen_dashboard.png               # Dashboard nhân viên & bộ tính lương
+├── screen_facemesh.png                # Xác thực khuôn mặt 3D Face Mesh AI
+├── screen_noise_tab.png               # Cảm biến độ ồn môi trường 78.7 dB
+├── screen_admin_employees.png         # Quản trị Admin CRUD nhân viên
+├── screen_shifts.png                  # Quản lý ca trực Manager Shift
+├── screen_history.png                 # Lịch sử chấm công
+├── screen_leaves.png                  # Đơn xin nghỉ phép
 │
 ├── Sang6_WebAPI/                      # Thư mục mã nguồn Backend ASP.NET Core
 │   ├── Controllers/                   # Các bộ điều khiển API RESTful
@@ -300,7 +312,7 @@ docker-compose up -d --build
 | `POST` | `/api/LeaveRequest/create` | Gửi đơn xin nghỉ phép | Bearer Token |
 | `GET` | `/api/LeaveRequest/my-requests` | Xem danh sách đơn nghỉ phép cá nhân | Bearer Token |
 | `GET` | `/api/Employee/all` | Quản lý danh sách nhân viên | Admin / Manager |
-| `POST` | `/api/Shift/create` | Thiết lập ca làm việc mới | Admin |
+| `POST` | `/api/Shift` | Thiết lập ca làm việc mới | Manager / Admin |
 
 > Khám phá toàn bộ schema và test trực tiếp các endpoint tại giao diện **Swagger UI**: `http://localhost:5000/swagger`.
 

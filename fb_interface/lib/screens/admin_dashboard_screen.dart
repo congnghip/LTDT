@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/app_models.dart';
@@ -19,7 +18,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
 
   List<AttendanceModel> _allAttendances = [];
   List<UserModel> _employees = [];
-  List<ShiftModel> _shifts = [];
   List<LeaveRequestModel> _allLeaveRequests = [];
 
   bool _isLoading = false;
@@ -27,48 +25,17 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   final timeFormat = DateFormat("HH:mm");
   final dateFormat = DateFormat("dd/MM/yyyy");
 
-  // Dynamic QR
-  String? _dynamicQrToken;
-  int _qrCountdown = 15;
-  Timer? _qrTimer;
-
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _loadAllData();
-    _startDynamicQrLoop();
   }
 
   @override
   void dispose() {
-    _qrTimer?.cancel();
+    _tabController.dispose();
     super.dispose();
-  }
-
-  void _startDynamicQrLoop() {
-    _refreshQr();
-    _qrTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!mounted) return;
-      setState(() {
-        if (_qrCountdown > 1) {
-          _qrCountdown--;
-        } else {
-          _qrCountdown = 15;
-          _refreshQr();
-        }
-      });
-    });
-  }
-
-  Future<void> _refreshQr() async {
-    final qrData = await _service.getDynamicQr();
-    if (qrData != null && mounted) {
-      setState(() {
-        _dynamicQrToken = qrData['token'];
-        _qrCountdown = qrData['expiresInSeconds'] ?? 15;
-      });
-    }
   }
 
   Future<void> _loadAllData() async {
@@ -76,7 +43,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     await Future.wait([
       _loadAttendances(),
       _loadEmployees(),
-      _loadShifts(),
       _loadLeaveRequests(),
     ]);
     setState(() => _isLoading = false);
@@ -90,11 +56,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   Future<void> _loadEmployees() async {
     final list = await _service.getEmployees();
     setState(() => _employees = list);
-  }
-
-  Future<void> _loadShifts() async {
-    final list = await _service.getShifts();
-    setState(() => _shifts = list);
   }
 
   Future<void> _loadLeaveRequests() async {
@@ -182,53 +143,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     );
   }
 
-  // === CRUD CA LÀM VIỆC ===
-  Future<void> _showAddShiftDialog() async {
-    final nameCtrl = TextEditingController();
-    final startCtrl = TextEditingController(text: '08:00');
-    final endCtrl = TextEditingController(text: '17:00');
-    final rateCtrl = TextEditingController(text: '50000');
-
-    await showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Thêm ca làm việc mới'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Tên ca làm việc *')),
-            TextField(controller: startCtrl, decoration: const InputDecoration(labelText: 'Giờ bắt đầu (HH:mm)')),
-            TextField(controller: endCtrl, decoration: const InputDecoration(labelText: 'Giờ kết thúc (HH:mm)')),
-            TextField(controller: rateCtrl, decoration: const InputDecoration(labelText: 'Đơn giá lương (đ/giờ)')),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Hủy')),
-          ElevatedButton(
-            onPressed: () async {
-              if (nameCtrl.text.trim().isEmpty) return;
-              Navigator.pop(ctx);
-              final ok = await _service.createShift({
-                'name': nameCtrl.text.trim(),
-                'startTime': startCtrl.text.trim(),
-                'endTime': endCtrl.text.trim(),
-                'hourlyRate': double.tryParse(rateCtrl.text.trim()) ?? 50000,
-                'lateGraceMinutes': 15,
-              });
-              if (ok && mounted) {
-                _loadShifts();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Thêm ca làm việc thành công!'), backgroundColor: Colors.green),
-                );
-              }
-            },
-            child: const Text('Lưu'),
-          ),
-        ],
-      ),
-    );
-  }
-
   // === CRUD PHÊ DUYỆT ĐƠN NGHỈ PHÉP ===
   Future<void> _handleUpdateLeaveStatus(int id, String status) async {
     final ok = await _service.updateLeaveStatus(id, status);
@@ -270,16 +184,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         ],
         bottom: TabBar(
           controller: _tabController,
-          isScrollable: true,
           indicatorColor: Colors.amber,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
           tabs: const [
             Tab(icon: Icon(Icons.table_chart), text: 'Bảng Chấm Công'),
             Tab(icon: Icon(Icons.people), text: 'Nhân Viên (CRUD)'),
-            Tab(icon: Icon(Icons.schedule), text: 'Ca Làm (CRUD)'),
             Tab(icon: Icon(Icons.check_circle_outline), text: 'Duyệt Đơn Nghỉ'),
-            Tab(icon: Icon(Icons.qr_code_2), text: 'Mã Dynamic QR'),
           ],
         ),
       ),
@@ -290,9 +201,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
               children: [
                 _buildAttendanceTab(),
                 _buildEmployeeTab(),
-                _buildShiftTab(),
                 _buildLeaveApprovalTab(),
-                _buildDynamicQrStationTab(),
               ],
             ),
     );
@@ -387,47 +296,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     );
   }
 
-  // TAB 3: Quản lý ca làm việc (CRUD)
-  Widget _buildShiftTab() {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: _shifts.isEmpty
-          ? const Center(child: Text('Chưa có ca làm việc nào'))
-          : ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: _shifts.length,
-              itemBuilder: (ctx, i) {
-                final s = _shifts[i];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ListTile(
-                    leading: const Icon(Icons.access_time, color: Colors.indigo),
-                    title: Text(s.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text('Thời gian: ${s.startTime} - ${s.endTime} | Đơn giá: ${currencyFormat.format(s.hourlyRate)} đ/h'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () async {
-                        final ok = await _service.deleteShift(s.id);
-                        if (ok && mounted) {
-                          _loadShifts();
-                        }
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddShiftDialog,
-        icon: const Icon(Icons.add_alarm),
-        label: const Text('Thêm Ca Làm'),
-        backgroundColor: Colors.indigo[900],
-        foregroundColor: Colors.white,
-      ),
-    );
-  }
-
-  // TAB 4: Phê duyệt đơn nghỉ phép
+  // TAB 3: Phê duyệt đơn nghỉ phép
   Widget _buildLeaveApprovalTab() {
     if (_allLeaveRequests.isEmpty) {
       return const Center(child: Text('Không có đơn xin nghỉ phép nào'));
@@ -493,80 +362,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
           ),
         );
       },
-    );
-  }
-
-  // TAB 5: TRẠM PHÁT DYNAMIC QR (TÍNH NĂNG MỚI ĐỀ XUẤT 1.0đ)
-  Widget _buildDynamicQrStationTab() {
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(color: Colors.indigo[50], borderRadius: BorderRadius.circular(20)),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.security, color: Colors.indigo, size: 20),
-                  SizedBox(width: 8),
-                  Text('CHỐNG ĐIỂM DANH HỘ: DYNAMIC QR 15 GIÂY',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo, fontSize: 13)),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Mã QR Visualizer
-            Container(
-              width: 240,
-              height: 240,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.indigo.shade200, width: 4),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 15, spreadRadius: 3),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.qr_code_2, size: 140, color: Colors.indigo),
-                  const SizedBox(height: 6),
-                  Text(
-                    _dynamicQrToken?.substring(0, 20) ?? 'CHAMCONG_QR_TOKEN',
-                    style: const TextStyle(fontSize: 10, color: Colors.grey, fontFamily: 'monospace'),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Đồng hồ đếm ngược
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.timer, color: Colors.deepOrange),
-                const SizedBox(width: 6),
-                Text(
-                  'Tự động làm mới mã sau: $_qrCountdown giây',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.deepOrange),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Màn hình này được chiếu tại quầy lễ tân / sảnh công ty.\n'
-              'Mã QR tự thay đổi mỗi 15 giây để ngăn nhân viên chụp ảnh gửi cho đồng nghiệp check-in hộ.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

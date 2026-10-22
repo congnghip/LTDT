@@ -35,8 +35,8 @@ namespace Sang6_WebAPI.Controllers
             return Ok(shift);
         }
 
-        // 3. POST: Thêm ca mới (Admin)
-        [Authorize(Roles = "Admin")]
+        // 3. POST: Thêm ca mới (Admin / Manager)
+        [Authorize(Roles = "Manager,Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateShift([FromBody] CreateShiftDto dto)
         {
@@ -58,8 +58,8 @@ namespace Sang6_WebAPI.Controllers
             return CreatedAtAction(nameof(GetShift), new { id = shift.Id }, shift);
         }
 
-        // 4. PUT: Cập nhật ca làm việc (Admin)
-        [Authorize(Roles = "Admin")]
+        // 4. PUT: Cập nhật ca làm việc (Admin / Manager)
+        [Authorize(Roles = "Manager,Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateShift(int id, [FromBody] CreateShiftDto dto)
         {
@@ -79,8 +79,8 @@ namespace Sang6_WebAPI.Controllers
             return Ok(new { status = true, message = "Cập nhật ca làm việc thành công!", data = shift });
         }
 
-        // 5. DELETE: Xóa ca làm việc (Admin)
-        [Authorize(Roles = "Admin")]
+        // 5. DELETE: Xóa ca làm việc (Admin / Manager)
+        [Authorize(Roles = "Manager,Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShift(int id)
         {
