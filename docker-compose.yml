@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. Database PostgreSQL
+  # 1. Cơ sở dữ liệu PostgreSQL 16
   db:
     image: postgres:16-alpine
     container_name: ltdd_postgres
@@ -9,13 +9,13 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: ltdd_tuan7
+      POSTGRES_DB: buinguyencongnghiep_chamcong
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # 2. Backend ASP.NET Core Web API
+  # 2. Máy chủ Backend ASP.NET Core Web API
   backend:
     build:
       context: ./Sang6_WebAPI
@@ -26,25 +26,34 @@ services:
       - db
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=ltdd_tuan7;Username=postgres;Password=admin
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=buinguyencongnghiep_chamcong;Username=postgres;Password=admin
       - JWTKey__Secret=AReallyLongSecretKeyForYourJWTTokenSigning1234567890!
-      - JWTKey__ValidIssuer=Sang6_WebAPI
-      - JWTKey__ValidAudience=Sang6_WebAPI_Client
+      - JWTKey__ValidIssuer=BuiNguyenCongNghiep_API
+      - JWTKey__ValidAudience=BuiNguyenCongNghiep_Client
       - JWTKey__TokenExpiryTimeInHour=24
     ports:
       - "5000:5000"
 
-  # 3. Frontend Flutter Web (Nginx)
-  frontend:
-    build:
-      context: ./fb_interface
-      dockerfile: Dockerfile
-    container_name: ltdd_frontend
-    restart: always
-    depends_on:
-      - backend
-    ports:
-      - "8080:80"
+  # 3. Cloudflare Tunnel (Tùy chọn: Expose backend ra Internet với HTTPS chính chủ Cloudflare)
+  # tunnel:
+  #   image: cloudflare/cloudflared:latest
+  #   container_name: ltdd_tunnel
+  #   restart: always
+  #   command: tunnel --no-autoupdate run --token <YOUR_CLOUDFLARE_TUNNEL_TOKEN>
+  #   depends_on:
+  #     - backend
+
+  # 4. Frontend Client (Lưu ý: Mã nguồn Frontend Flutter được tách riêng tại https://github.com/congnghip/LTDT_FE)
+  # frontend:
+  #   build:
+  #     context: ./fb_interface
+  #     dockerfile: Dockerfile
+  #   container_name: ltdd_frontend
+  #   restart: always
+  #   depends_on:
+  #     - backend
+  #   ports:
+  #     - "8080:80"
 
 volumes:
   postgres_data:

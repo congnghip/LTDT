@@ -58,6 +58,9 @@ ios/Runner/GeneratedPluginRegistrant.*
 # Temporary & database files
 *.log
 
+# Frontend Mobile & Web Client (managed in https://github.com/congnghip/LTDT_FE)
+/fb_interface/
+
 # Environment & Secret files
 .env
 .env.*
